@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Month | Still Loving You</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
+    <!-- Font Awesome (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+
+    <!-- Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                    },
+                    colors: {
+                        'aesthetic-black': '#0a0a0a',
+                        'aesthetic-cream': '#f3f3f3',
+                        'aesthetic-gold': '#d4af37',
+                    },
+                    animation: {
+                        'slow-spin': 'spin 12s linear infinite',
+                        'fade-in': 'fadeIn 1.5s ease-in-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Smoothness & Hide Scrollbar */
+        body {
+            background-color: #0a0a0a;
+            color: #f3f3f3;
+            overflow-x: hidden;
+        }
+
+        /* Swiper Customization */
+        .swiper {
+            width: 100%;
+            height: 100vh;
+        }
+
+        .swiper-slide {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide-inner {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.1); /* Slight zoom for parallax feel */
+            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .swiper-slide-active .slide-inner {
+            transform: scale(1);
+        }
+
+        /* Text Reveal Animation inside Swiper */
+        .slide-content {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+            transition-delay: 0.5s;
+        }
+        
+        .swiper-slide-active .slide-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Vinyl Record Animation for Music Player */
+        .vinyl-record {
+            animation: spin 8s linear infinite;
+            animation-play-state: paused;
+        }
+        .vinyl-record.playing {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Overlay Transition */
+        #enter-overlay {
+            transition: opacity 1s ease-in-out, visibility 1s;
+        }
+        #enter-overlay.hidden-overlay {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- AUDIO ELEMENT (Ganti src dengan link lagu Anda) -->
+    <!-- Contoh lagu royalty free yang aesthetic -->
+    <audio id="bg-music" loop>
+        <source src="D:\FILE EDIT\STUDIO\Tri\bgm.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <!-- 1. WELCOME OVERLAY (Untuk Trigger Musik) -->
+    <div id="enter-overlay" class="fixed inset-0 z-50 bg-aesthetic-black flex flex-col items-center justify-center text-center px-4">
+        <h1 class="font-serif text-4xl md:text-6xl italic text-aesthetic-cream mb-2 animate-fade-in tracking-wider">
+            Fifteen Month
+        </h1>
+        <p class="text-xs md:text-sm text-gray-400 mb-8 uppercase tracking-[0.3em] animate-fade-in" style="animation-delay: 0.5s;">
+            Still Loving You
+        </p>
+        <button id="enter-btn" class="group relative px-8 py-3 border border-aesthetic-cream/30 rounded-full overflow-hidden transition-all duration-500 hover:border-aesthetic-gold animate-fade-in" style="animation-delay: 1s;">
+            <span class="relative z-10 text-sm tracking-widest group-hover:text-aesthetic-black transition-colors duration-500">MASUK</span>
+            <div class="absolute inset-0 bg-aesthetic-gold transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
+        </button>
+        <p class="mt-4 text-[10px] text-gray-600 animate-pulse">Disarankan pakai Headphone ya! 🎧</p>
+    </div>
+
+    <!-- 2. FLOATING MUSIC CONTROL -->
+    <div class="fixed bottom-6 right-6 z-40 flex items-center gap-3 mix-blend-difference">
+        <div id="music-equalizer" class="flex gap-1 h-4 items-end opacity-0 transition-opacity duration-1000">
+            <div class="w-1 bg-white animate-[bounce_1s_infinite] h-2"></div>
+            <div class="w-1 bg-white animate-[bounce_1.2s_infinite] h-4"></div>
+            <div class="w-1 bg-white animate-[bounce_0.8s_infinite] h-3"></div>
+        </div>
+        <button id="toggle-music" class="w-10 h-10 rounded-full border border-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/10 transition-all">
+            <i id="music-icon" class="fa-solid fa-volume-high text-xs"></i>
+        </button>
+    </div>
+
+    <!-- 3. NAVIGATION (Minimalist) -->
+    <nav class="fixed top-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
+        <div class="text-lg font-serif italic font-bold">Arteri.</div>
+    </nav>
+
+    <!-- 4. MAIN SWIPER CAROUSEL -->
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            
+            <!-- Slide 1 -->
+            <div class="swiper-slide">
+                <!-- Ganti 'img/foto1.jpg' sesuai nama file kamu -->
+                <div class="slide-inner" style="background-image: url('D:/FILE EDIT/STUDIO/Tri/q.jpg');"></div>
+                <div class="absolute inset-0 bg-black/30"></div>
+                
+                <!-- Content -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                    <div class="slide-content">
+                        <p class="text-xs tracking-[0.5em] mb-4 uppercase text-aesthetic-gold">Slide 1</p>
+                        <h2 class="font-serif text-5xl md:text-8xl italic mb-6">Arteri</h2>
+                        <p class="max-w-md mx-auto text-sm font-light text-gray-200 leading-relaxed">
+                            Nama yang mungkin akan menjadi bagian dari kita. Kata Arteri, aa maknai bahwa hal kotor/buruk yang kita miliki akan disaring dan kembali jadi lebih kuat untuk kita ayy.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+                <!-- Ganti 'img/foto1.jpg' sesuai nama file kamu -->
+                <div class="slide-inner" style="background-image: url('D:/FILE EDIT/STUDIO/Tri/w.jpg');"></div>
+                <div class="absolute inset-0 bg-black/30"></div>
+                
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                    <div class="slide-content">
+                        <p class="text-xs tracking-[0.5em] mb-4 uppercase text-aesthetic-gold">Slide 2</p>
+                        <h2 class="font-serif text-5xl md:text-8xl italic mb-6">15 Month</h2>
+                        <p class="max-w-md mx-auto text-sm font-light text-gray-200 leading-relaxed">
+                            Sejauh ini, selama ini, banyak banget hal hal yang kita lewatin bersama sama, suka dan duka nya udah banyak banget.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+                <!-- Ganti 'img/foto1.jpg' sesuai nama file kamu -->
+                <div class="slide-inner" style="background-image: url('D:/FILE EDIT/STUDIO/Tri/e.jpg');"></div>
+                <div class="absolute inset-0 bg-black/30"></div>
+                
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                    <div class="slide-content">
+                        <p class="text-xs tracking-[0.5em] mb-4 uppercase text-aesthetic-gold">Slide 3</p>
+                        <h2 class="font-serif text-5xl md:text-8xl italic mb-6">Still Loving You</h2>
+                        <p class="max-w-md mx-auto text-sm font-light text-gray-200 leading-relaxed">
+                            Aa bangga sama aay, aa sayang sama aay, aa makin jatuh cinta dengan aay, benar adanya dari dulu sampai sekarang. aa akan tetap memilih aay dalam keadaan apapun, sampai kapanpun. Makasih ya udah selalu ada buat aa.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4 -->
+             <div class="swiper-slide">
+                <!-- Ganti 'img/foto1.jpg' sesuai nama file kamu -->
+                <div class="slide-inner" style="background-image: url('D:/FILE EDIT/STUDIO/Tri/r.jpg');"></div>
+                <div class="absolute inset-0 bg-black/30"></div>
+                
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                    <div class="slide-content">
+                        <p class="text-xs tracking-[0.5em] mb-4 uppercase text-aesthetic-gold">Slide 4</p>
+                        <h2 class="font-serif text-5xl md:text-8xl italic mb-6">Apologize</h2>
+                        <p class="max-w-md mx-auto text-sm font-light text-gray-200 leading-relaxed">
+                            Maafin aa ya di masa yang lalu, aa belom bisa banggain aay, aa belom bisa jadi apa yang aay mau, aa usahain semuanya buat aay, buat kamu. Selalu. Love You Sayang <3
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Pagination & Navigation -->
+        <div class="swiper-pagination !bottom-10 mix-blend-difference"></div>
+        <div class="swiper-button-next !text-white/50 hover:!text-white after:!text-xl transition-colors"></div>
+        <div class="swiper-button-prev !text-white/50 hover:!text-white after:!text-xl transition-colors"></div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- Main Logic -->
+    <script>
+        // 1. Setup Elements
+        const enterBtn = document.getElementById('enter-btn');
+        const overlay = document.getElementById('enter-overlay');
+        const bgMusic = document.getElementById('bg-music');
+        const toggleBtn = document.getElementById('toggle-music');
+        const musicIcon = document.getElementById('music-icon');
+        const equalizer = document.getElementById('music-equalizer');
+        let isPlaying = false;
+
+        // 2. Swiper Initialization (Smooth Effect)
+        var swiper = new Swiper(".mySwiper", {
+            direction: "vertical", // Scrolling ke bawah
+            speed: 1500, // Kecepatan transisi (1.5 detik) sangat smooth
+            parallax: true, // Efek Parallax background
+            mousewheel: true, // Bisa scroll pakai mouse
+            keyboard: true,
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+                renderBullet: function (index, className) {
+                    return '<span class="' + className + ' !bg-white !w-2 !h-2 !opacity-50 hover:!opacity-100 transition-opacity"></span>';
+                },
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+            },
+            effect: 'creative', // Efek transisi custom
+            creativeEffect: {
+                prev: {
+                    shadow: true,
+                    translate: [0, "-20%", -1],
+                },
+                next: {
+                    translate: [0, "100%", 0],
+                },
+            },
+        });
+
+        // 3. Enter Site Logic (Handle Music Autoplay Policy)
+        enterBtn.addEventListener('click', () => {
+            // Hide Overlay
+            overlay.classList.add('hidden-overlay');
+            
+            // Play Music
+            bgMusic.volume = 0.4; // Volume 40%
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                equalizer.classList.remove('opacity-0');
+            }).catch(error => {
+                console.log("Autoplay dicegah browser, user harus interaksi manual.");
+            });
+        });
+
+        // 4. Toggle Music Logic
+        toggleBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.classList.remove('fa-volume-high');
+                musicIcon.classList.add('fa-volume-xmark');
+                equalizer.classList.add('opacity-0');
+                isPlaying = false;
+            } else {
+                bgMusic.play();
+                musicIcon.classList.remove('fa-volume-xmark');
+                musicIcon.classList.add('fa-volume-high');
+                equalizer.classList.remove('opacity-0');
+                isPlaying = true;
+            }
+        });
+
+        // 5. Handle Tab Focus (Pause music if user leaves tab - optional)
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden && isPlaying) {
+                bgMusic.pause();
+            } else if (!document.hidden && isPlaying) {
+                bgMusic.play();
+            }
+        });
+    </script>
+</body>
+</html>
